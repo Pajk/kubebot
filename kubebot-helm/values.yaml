@@ -16,9 +16,9 @@ slack:
   # Specify slack admins that kubebot should listen to; use a space as a separator
   admins: ""
   # Specify valid kubectl commands that kubebot should support; use a space as a separator
-  commands: "get scale describe"
+  commands: get scale describe
   token: xoxb-XXXXXXX....
-  chanel: XXXXXX
+  channel: XXXXXX
 
 resources: 
   # We usually recommend not to specify default resources and to leave this as a conscious

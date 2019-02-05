@@ -1,11 +1,9 @@
 package main
 
 import (
-	"fmt"
-	"io"
-	"io/ioutil"
 	"log"
 	"net/http"
+	"os"
 )
 
 func versionHandler(w http.ResponseWriter, r *http.Request) {
