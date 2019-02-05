@@ -4,6 +4,9 @@ import (
 	"errors"
 	"fmt"
 	"os"
+"log"
+"net/http"
+	"github.com/gorilla/mux"
 
 	"github.com/go-chat-bot/bot/slack"
 )
@@ -54,9 +57,10 @@ func main() {
 		channels: stringToMap(os.Getenv(slackChannelsLabel), " "),
 		commands: stringToMap(os.Getenv(slackCommandsLabel), " "),
 	}
-
-	slack.Run(kb.token)
-
+	go slack.Run(kb.token)
+	log.Print(os.Getenv(appVersion))
+	router := mux.NewRouter().StrictSlash(true)
+	router.HandleFunc("/", frontendHandler)
 	router.HandleFunc("/version", versionHandler)
 	router.HandleFunc("/healthz", healthzHandler)
 	router.HandleFunc("/readinez", readinessHandler)

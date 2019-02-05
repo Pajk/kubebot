@@ -1,12 +1,15 @@
 package main
 
 import (
-	"fmt"
-	"io"
-	"io/ioutil"
-	"log"
+	"os"
 	"net/http"
+	"log"
 )
+
+func frontendHandler(w http.ResponseWriter, r *http.Request) {
+        w.Write([]byte("Kubebot"))
+	log.Print("Request processed")
+}
 
 func versionHandler(w http.ResponseWriter, r *http.Request) {
 	var b []byte
