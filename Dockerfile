@@ -16,3 +16,4 @@ COPY --from=alpine /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
 COPY --from=builder /usr/bin/kubectl /usr/bin/kubectl
 COPY --from=builder /go/src/app/app .
 CMD ["/app"]
+EXPOSE 80
