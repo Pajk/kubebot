@@ -9,6 +9,7 @@ import (
 )
 
 const (
+	appVersion             string = "KUBEBOT_APP_VERSION"
 	slackTokenLabel        string = "KUBEBOT_SLACK_TOKEN"
 	slackChannelsLabel     string = "KUBEBOT_SLACK_CHANNELS_IDS"
 	slackAdminsLabel       string = "KUBEBOT_SLACK_ADMINS_NICKNAMES"
@@ -21,6 +22,9 @@ var (
 )
 
 func validateEnvParams() error {
+	if os.Getenv(appVersion) == "" {
+		return errors.New(fmt.Sprintf(notDefinedErrorMessage, appVersion))
+	}
 	if os.Getenv(slackTokenLabel) == "" {
 		return errors.New(fmt.Sprintf(notDefinedErrorMessage, slackTokenLabel))
 	}
@@ -52,4 +56,10 @@ func main() {
 	}
 
 	slack.Run(kb.token)
+
+	router.HandleFunc("/version", versionHandler)
+	router.HandleFunc("/healthz", healthzHandler)
+	router.HandleFunc("/readinez", readinessHandler)
+
+	log.Fatal(http.ListenAndServe(":80", router))
 }

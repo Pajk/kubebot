@@ -1,0 +1,52 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  annotations:
+  name: {{ .Release.Name }}
+  namespace: {{ .Release.Namespace }}
+rules:
+- apiGroups:
+  - ""
+  - extensions
+  - extensions/scale
+  - apps
+  - networking.istio.io
+  resources:
+  - serviceaccounts
+  - secrets
+  - deployments/scale
+  - deployments
+  - replicasets/scale
+  - replicasets
+  - pods
+  - pods/log
+  - pods/portforward
+  - services
+  - configmaps
+  - namespaces
+  - virtualservices
+  - destinationrules
+  - replicationcontrollers
+  - replicationcontrollers/scale
+  verbs:
+  - "get"
+  - "watch"
+  - "list"
+  - "scale"
+  - "create"
+  - "update"
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  annotations:
+  name: {{ .Release.Name }}
+  namespace: {{ .Release.Namespace }}
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: {{ .Release.Name }}
+subjects:
+- kind: ServiceAccount
+  name: {{ .Release.Name }}
+  namespace: {{ .Release.Namespace }}

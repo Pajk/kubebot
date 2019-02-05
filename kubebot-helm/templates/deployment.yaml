@@ -1,0 +1,71 @@
+apiVersion: apps/v1beta2
+kind: Deployment
+metadata:
+  name: {{ template "kubebot.fullname" . }}
+  labels:
+    app: {{ template "kubebot.name" . }}
+    chart: {{ template "kubebot.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ template "kubebot.name" . }}
+      release: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        app: {{ template "kubebot.name" . }}
+        release: {{ .Release.Name }}
+    spec:
+      containers:
+        - name: {{ .Chart.Name }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          env:
+          - name: KUBEBOT_APP_VERSION
+            value: "{{ .Values.image.tag }}"
+          # Create a secret with your slack bot token and reference it here
+          - name: KUBEBOT_SLACK_TOKEN
+            valueFrom:
+              secretKeyRef: 
+                name: kubebot
+                key: token 
+          # Create a secret with your slack bot channel id and reference it here
+          - name: KUBEBOT_SLACK_CHANNELS_IDS
+            valueFrom:
+              secretKeyRef: 
+                name: kubebot 
+                key: channel
+          # Alternatively, use this instead if you don't need to put channel ids in a secret; use a space as a separator
+          # - name: KUBEBOT_SLACK_CHANNELS_IDS
+          #   value: "1234 4321" 
+          # Specify slack admins that kubebot should listen to; use a space as a separator
+          - name: KUBEBOT_SLACK_ADMINS_NICKNAMES
+            value: "{{ .Values.slack.admins }}"
+          # Specify valid kubectl commands that kubebot should support; use a space as a separator
+          - name: KUBEBOT_SLACK_VALID_COMMANDS
+            value: "{{ .Values.slack.commands }}"
+          ports:
+            - name: http
+              containerPort: 80
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: http
+          resources:
+{{ toYaml .Values.resources | indent 12 }}
+    {{- with .Values.nodeSelector }}
+      nodeSelector:
+{{ toYaml . | indent 8 }}
+    {{- end }}
+    {{- with .Values.affinity }}
+      affinity:
+{{ toYaml . | indent 8 }}
+    {{- end }}
+    {{- with .Values.tolerations }}
+      tolerations:
+{{ toYaml . | indent 8 }}
+    {{- end }}

@@ -1,4 +1,5 @@
 # Improvements
+
 Add alias k=kubectl
 Reduce docker image size from 300MB to 16MB
 Update kubectl version
@@ -6,6 +7,10 @@ Minor changes to slack messages
 Add RBAC template
 Add Helm Chart
 
+# Helm Chart
+
+ 
+ 
 # Kubebot
 
 Kubebot is a Kubernetes chatbot for Slack. 
