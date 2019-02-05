@@ -46,7 +46,7 @@ spec:
             value: "{{ .Values.slack.admins }}"
           # Specify valid kubectl commands that kubebot should support; use a space as a separator
           - name: KUBEBOT_SLACK_VALID_COMMANDS
-            value: "{{ .Values.slack.commands }}"
+            value: {{ .Values.slack.commands }}
           ports:
             - name: http
               containerPort: 80
