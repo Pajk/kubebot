@@ -1,15 +1,20 @@
 # Improvements
 
 Add alias k=kubectl
+
 Reduce docker image size from 300MB to 16MB
+
 Update kubectl version
+
 Minor changes to slack messages
+
 Add RBAC template
+
 Add Helm Chart
 
 # Helm Chart
 
- 
+helm template kubebot-helm --name kubebot --set slack.admins=_REPLACE-NAME_ --set slack.token=_xoxb-REPLACE-TOKEN_ --set slack.channel=_REPLACE-CHANNEL-ID_ --set image.tag=3.0.23|k apply -f - 
  
 # Kubebot
 
