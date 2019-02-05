@@ -1,14 +1,18 @@
-FROM golang:1.6
-
-RUN wget http://storage.googleapis.com/kubernetes-release/release/v1.7.2/bin/linux/amd64/kubectl -O /usr/bin/kubectl && \
+FROM golang:1.11 as builder
+RUN wget http://storage.googleapis.com/kubernetes-release/release/v1.13.3/bin/linux/amd64/kubectl -O /usr/bin/kubectl && \
     chmod +x /usr/bin/kubectl
-
-RUN mkdir -p /go/src/app
 WORKDIR /go/src/app
+COPY . .
+RUN go get -d -v ./...
+RUN cd /go/src/github.com/nlopes/slack&&git checkout tags/v0.4.0&&cd -
+RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -a -ldflags '-extldflags "-static"' -o app -v ./...
 
-ADD . /go/src/app/
+FROM alpine:3.6 as alpine
+RUN apk update && apk add -U --no-cache ca-certificates && rm -rf /var/cache/apk/*
 
-RUN go-wrapper download
-RUN go-wrapper install
-
-CMD ["app"]
+FROM scratch
+WORKDIR /
+COPY --from=alpine /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
+COPY --from=builder /usr/bin/kubectl /usr/bin/kubectl
+COPY --from=builder /go/src/app/app .
+CMD ["/app"]

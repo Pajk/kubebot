@@ -24,7 +24,7 @@ const (
 	forbiddenChannelResponse string = "Sorry @%s, but I'm not allowed to run this command here :zipper_mouth_face:"
 	forbiddenCommandResponse string = "Sorry @%s, but I cannot run this command."
 	forbiddenFlagResponse    string = "Sorry @%s, but I'm not allowed to run one of your flags."
-	okResponse               string = "Roger that!\n@%s, this is the response to your request:\n ```\n%s\n``` "
+	okResponse               string = "```\n%s\n``` "
 )
 
 var (
@@ -132,7 +132,7 @@ func validateFlags(arguments ...string) error {
 	return nil
 }
 
-func kubectl(command *bot.Cmd) (msg string, err error) {
+func k(command *bot.Cmd) (msg string, err error) {
 	t := time.Now()
 	time := t.Format(time.RFC3339)
 	nickname := command.User.Nick
@@ -159,13 +159,13 @@ func kubectl(command *bot.Cmd) (msg string, err error) {
 
 	output := execute("kubectl", command.Args...)
 
-	return fmt.Sprintf(okResponse, nickname, output), nil
+	return fmt.Sprintf(okResponse, output), nil
 }
 
 func init() {
 	bot.RegisterCommand(
-		"kubectl",
+		"k",
 		"Kubectl Slack integration",
 		"",
-		kubectl)
+		k)
 }
